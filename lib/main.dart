@@ -5,6 +5,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:provider/provider.dart';
@@ -23,6 +24,7 @@ import 'src/presentation/components/keyboard/keyboard_dismiss.dart';
 void main() async {
   final widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
   /// bloc logger
   if (kDebugMode) {
@@ -46,55 +48,55 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => ModelBinding(
-        initialModel: AppOptions(
-          textScaleFactor: systemTextScaleFactorOption,
-          customTextDirection: CustomTextDirection.localeBased,
-          locale: Locale(localSource.locale),
-          timeDilation: timeDilation,
-          platform: defaultTargetPlatform,
+    initialModel: AppOptions(
+      textScaleFactor: systemTextScaleFactorOption,
+      customTextDirection: CustomTextDirection.localeBased,
+      locale: Locale(localSource.locale),
+      timeDilation: timeDilation,
+      platform: defaultTargetPlatform,
+    ),
+    child: MultiBlocProvider(
+      providers: [
+        BlocProvider<MainBloc>(create: (_) => sl<MainBloc>()),
+        ChangeNotifierProvider(
+          create: (context) => OrderProvider(),
+          child: MyOrders(),
+        )
+      ],
+      child: KeyboardDismiss(
+        child: Builder(
+          builder: (ctx) {
+            final AppOptions options = AppOptions.of(ctx);
+            return MaterialApp(
+              theme: ThemeData(
+                  colorScheme:
+                  ColorScheme.light(primary: Color(0xff79b531))),
+              darkTheme: ThemeData(
+                  colorScheme:
+                  ColorScheme.dark(primary: Color(0xff79b531))),
+              themeMode: ThemeMode.light,
+
+              /// title
+              debugShowCheckedModeBanner: false,
+              navigatorKey: rootNavigatorKey,
+              scaffoldMessengerKey: scaffoldMessengerKey,
+
+              /// lang
+              locale: options.locale,
+              localizationsDelegates:
+              AppLocalizations.localizationsDelegates,
+              supportedLocales: AppLocalizations.supportedLocales,
+
+              /// pages
+              initialRoute: Routes.initial,
+              onGenerateRoute: AppRoutes.onGenerateRoute,
+              onUnknownRoute: AppRoutes.onUnknownRoute,
+            );
+          },
         ),
-        child: MultiBlocProvider(
-          providers: [
-            BlocProvider<MainBloc>(create: (_) => sl<MainBloc>()),
-            ChangeNotifierProvider(
-              create: (context) => OrderProvider(),
-              child: MyOrders(),
-            )
-          ],
-          child: KeyboardDismiss(
-            child: Builder(
-              builder: (ctx) {
-                final AppOptions options = AppOptions.of(ctx);
-                return MaterialApp(
-                  theme: ThemeData(
-                      colorScheme:
-                          ColorScheme.light(primary: Color(0xff79b531))),
-                  darkTheme: ThemeData(
-                      colorScheme:
-                          ColorScheme.dark(primary: Color(0xff79b531))),
-                  themeMode: ThemeMode.light,
-
-                  /// title
-                  debugShowCheckedModeBanner: false,
-                  navigatorKey: rootNavigatorKey,
-                  scaffoldMessengerKey: scaffoldMessengerKey,
-
-                  /// lang
-                  locale: options.locale,
-                  localizationsDelegates:
-                      AppLocalizations.localizationsDelegates,
-                  supportedLocales: AppLocalizations.supportedLocales,
-
-                  /// pages
-                  initialRoute: Routes.initial,
-                  onGenerateRoute: AppRoutes.onGenerateRoute,
-                  onUnknownRoute: AppRoutes.onUnknownRoute,
-                );
-              },
-            ),
-          ),
-        ),
-      );
+      ),
+    ),
+  );
 }
 
 class MyHttpOverrides extends HttpOverrides {

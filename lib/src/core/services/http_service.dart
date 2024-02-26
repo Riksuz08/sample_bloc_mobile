@@ -15,10 +15,37 @@ import '../../config/config.dart';
 import '../../config/router/app_routes.dart';
 import '../../data/models/notification/notification_data.dart';
 import '../../data/models/orderData/order_model.dart';
+import '../../presentation/pages/main/favorites/coupon_model.dart';
 import '../../presentation/pages/main/favorites/order_provider.dart';
+
 import '../../presentation/pages/main/profile/order_provider.dart';
 
 class HttpService {
+  Future<List<CouponModel>> fetchCoupons() async {
+    const String url =
+        '${Config.baseUrl}/coupons?consumer_key=${Config.consumerKey}&consumer_secret=${Config.consumerSecret}';
+
+    try {
+      final response = await http.get(Uri.parse(url));
+
+      if (response.statusCode == 200) {
+        final List<dynamic> data = json.decode(response.body)['coupons'];
+        final List<CouponModel> couponList =
+        data.map((item) => CouponModel.fromJson(item)).toList();
+
+        return couponList;
+      } else {
+        // Handle error
+        print('Failed to load coupons. Status code: ${response.statusCode}');
+        return [];
+      }
+    } catch (e) {
+      // Handle network error
+      print('Error loading coupons: $e');
+      return [];
+    }
+  }
+
   Future<List<NotificationModel>> getAllNotifications() async {
     const String apiUrl = 'https://onesignal.com/api/v1/notifications';
     const String appId = 'ad050e7d-16a8-433e-abc3-ef19a554c5eb';
@@ -39,7 +66,7 @@ class HttpService {
 
       if (response.statusCode == 200) {
         final List<dynamic> jsonResponse =
-            json.decode(response.body)['notifications'];
+        json.decode(response.body)['notifications'];
 
         // Ensure that jsonResponse is a List<dynamic> before casting
         final List<NotificationModel> notifications = jsonResponse
@@ -60,16 +87,16 @@ class HttpService {
 
   Future<List<CategoryData>> fetchCategory() async {
     final responce =
-        await http.get(Uri.parse('${Config.baseUrl}/products/categories'
-            '?filter[limit] =100'
-            '&consumer_key=${Config.consumerKey}'
-            '&consumer_secret=${Config.consumerSecret}'));
+    await http.get(Uri.parse('${Config.baseUrl}/products/categories'
+        '?filter[limit] =100'
+        '&consumer_key=${Config.consumerKey}'
+        '&consumer_secret=${Config.consumerSecret}'));
     if (responce.statusCode == 200) {
       final List<dynamic> body =
-          jsonDecode(responce.body)['product_categories'];
+      jsonDecode(responce.body)['product_categories'];
 
       final List<CategoryData> categories = body.map(
-        (category) {
+            (category) {
           return CategoryData.fromJson(category);
         },
       ).toList();
@@ -80,27 +107,27 @@ class HttpService {
   }
 
   Future<OrderModel?> orderProducts(
-    List<ProductItem> orderProducts,
-    String name,
-    String surname,
-    String email,
-    String phoneNumber,
-    int id,
-    String? addressSH,
-    String? nameSH,
-    String? surnameSH,
-    String? phoneNumberSH,
-    String totalPrice,
-    String city,
-    String pay,
-    String delivery,
-  ) async {
-    final List<Map<String, dynamic>> lineItems = orderProducts.map((item) {
-      return {
-        'product_id': item.id,
-        'quantity': item.quantity,
-      };
-    }).toList();
+      List<ProductItem> orderProducts,
+      String name,
+      String surname,
+      String email,
+      String phoneNumber,
+      int id,
+      String? addressSH,
+      String? nameSH,
+      String? surnameSH,
+      String? phoneNumberSH,
+      String totalPrice,
+      String city,
+      String pay,
+      String delivery,
+      ) async {
+    final List<Map<String, dynamic>> lineItems = orderProducts
+        .map((item) => {
+      'product_id': item.id,
+      'quantity': item.quantity,
+    })
+        .toList();
 
     final Map<String, dynamic> orderData = {
       'order': {
@@ -115,7 +142,7 @@ class HttpService {
           'address_1': '',
           'city': city,
           'state': '',
-          'postcode': '',
+          'postcode': totalPrice,
           'country': 'UZ',
           'email': email,
           'phone': phoneNumber
@@ -127,7 +154,7 @@ class HttpService {
           'phone': phoneNumberSH,
           'city': city,
           'state': '',
-          'postcode': '',
+          'postcode': 'TOTAL SUMMA  ' + totalPrice,
           'country': 'UZ'
         },
         'customer_id': id,
@@ -141,8 +168,8 @@ class HttpService {
     final response = await http.post(
       Uri.parse(
         '${Config.baseUrl}/orders'
-        '?consumer_key=${Config.consumerKey}'
-        '&consumer_secret=${Config.consumerSecret}',
+            '?consumer_key=${Config.consumerKey}'
+            '&consumer_secret=${Config.consumerSecret}',
       ),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode(orderData),
@@ -153,12 +180,12 @@ class HttpService {
   }
 
   Future<void> reviewProduct(
-    int productId,
-    String review,
-    String reviewer,
-    String email,
-    int rating,
-  ) async {
+      int productId,
+      String review,
+      String reviewer,
+      String email,
+      int rating,
+      ) async {
     final Map<String, dynamic> reviewData = {
       'product_id': productId,
       'review': review,
@@ -224,7 +251,7 @@ class HttpService {
 
     if (response.statusCode == 200) {
       final List<dynamic> body =
-          jsonDecode(response.body)['product_categories'];
+      jsonDecode(response.body)['product_categories'];
 
       // Filter categories based on the parent value
       final List<SubCategoryData> categories = body
@@ -247,7 +274,7 @@ class HttpService {
       final List<dynamic> body = jsonDecode(responce.body)['products'];
 
       final List<ProductItem> products = body.map(
-        (product) {
+            (product) {
           return ProductItem.fromJson(product);
         },
       ).toList();
@@ -284,7 +311,7 @@ class HttpService {
         final List<dynamic> body = jsonDecode(response.body)['products'];
 
         final List<ProductItem> products = body.map(
-          (product) {
+              (product) {
             return ProductItem.fromJson(product);
           },
         ).toList();
@@ -331,7 +358,7 @@ class HttpService {
       final List<dynamic> body = jsonDecode(responce.body)['products'];
 
       final List<ProductItem> products = body.map(
-        (product) {
+            (product) {
           return ProductItem.fromJson(product);
         },
       ).toList();
@@ -348,7 +375,7 @@ class HttpService {
       final List<dynamic> body = jsonDecode(responce.body)['products'];
 
       final List<ProductItem> products = body.map(
-        (product) {
+            (product) {
           return ProductItem.fromJson(product);
         },
       ).toList();
@@ -367,7 +394,7 @@ class HttpService {
       final List<ProductItem> products = body
           .map(
             (product) => ProductItem.fromJson(product),
-          )
+      )
           .toList();
       return products;
     } else {
@@ -382,7 +409,7 @@ class HttpService {
       final List<dynamic> body = jsonDecode(responce.body)['products'];
 
       final List<ProductItem> products = body.map(
-        (product) {
+            (product) {
           return ProductItem.fromJson(product);
         },
       ).toList();
@@ -487,9 +514,9 @@ class HttpService {
   }
 
   Future<bool> loginUser(
-    TextEditingController emailController,
-    TextEditingController passwordController,
-  ) async {
+      TextEditingController emailController,
+      TextEditingController passwordController,
+      ) async {
     const url = 'https://asiaposuda.uz/ru/wp-json/api/v1/token';
     final String email = emailController.text;
     final List<String> parts = email.split('@');

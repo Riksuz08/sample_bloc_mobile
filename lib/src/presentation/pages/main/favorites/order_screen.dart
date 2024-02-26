@@ -11,6 +11,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../config/config.dart';
 import '../../../../data/models/products/products_data.dart';
+import 'coupon_model.dart';
 import 'order_provider.dart';
 
 class OrderScreen extends StatefulWidget {
@@ -30,11 +31,51 @@ class _OrderScreenState extends State<OrderScreen> {
   TextEditingController numberController = TextEditingController();
   TextEditingController promoController = TextEditingController();
   static List<ProductItem> order = FavoritesPage.checkedProducts;
+  List<CouponModel> coupons = [];
+  String amountPromo = '0';
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
+    fetchPromocodes().then((value) {
+      setState(() {
+        coupons = value;
+      });
+    });
     numberController.text = '+998';
+  }
+
+  String removeAfterDot(String input) {
+    // Remove everything after the dot
+    int dotIndex = input.indexOf('.');
+    if (dotIndex != -1) {
+      return input.substring(0, dotIndex);
+    }
+    return input;
+  }
+
+  double getPromoSum() {
+    final double x = int.parse(removeAfterDot(widget.totalPrice.toString())) *
+        int.parse(removeAfterDot(amountPromo)) /
+        100;
+    return x;
+  }
+
+  double getTotal() {
+    final double x =
+        int.parse(removeAfterDot(widget.totalPrice.toString())) - getPromoSum();
+    return x;
+  }
+
+  Future<List<CouponModel>> fetchPromocodes() async {
+    // Assuming HttpService().fetchCoupons() returns a List<CouponModel>
+    return HttpService().fetchCoupons();
+  }
+
+  String? findAmountForPromoCode(String promoCodeName) {
+    final coupon = coupons.firstWhere((coupon) => coupon.code == promoCodeName,
+        orElse: () =>
+            CouponModel(amount: '0', id: -1, code: '', usageLimit: 0));
+    return coupon.amount;
   }
 
   bool first = true;
@@ -108,13 +149,13 @@ class _OrderScreenState extends State<OrderScreen> {
 
     if (totalCheckedQuantity() == 1) {
       message =
-          "${totalCheckedQuantity().toString()} товар на сумму ${formatNumber(widget.totalPrice.round())}";
+      "${totalCheckedQuantity().toString()} товар на сумму ${formatNumber(widget.totalPrice.round())}";
     } else if (totalCheckedQuantity() >= 2 && totalCheckedQuantity() <= 4) {
       message =
-          "${totalCheckedQuantity().toString()} товара на сумму ${formatNumber(widget.totalPrice.round())}";
+      "${totalCheckedQuantity().toString()} товара на сумму ${formatNumber(widget.totalPrice.round())}";
     } else {
       message =
-          "${totalCheckedQuantity().toString()} товаров на сумму ${formatNumber(widget.totalPrice.round())}";
+      "${totalCheckedQuantity().toString()} товаров на сумму ${formatNumber(widget.totalPrice.round())}";
     }
     return Scaffold(
         appBar: AppBar(
@@ -149,9 +190,9 @@ class _OrderScreenState extends State<OrderScreen> {
                                 children: widget.orderProducts.map((product) {
                                   // Use product.images.first to get the first image URL for each product
                                   final String imageUrl =
-                                      product.images.isNotEmpty
-                                          ? product.images.first
-                                          : '';
+                                  product.images.isNotEmpty
+                                      ? product.images.first
+                                      : '';
 
                                   return Padding(
                                     padding: const EdgeInsets.all(8),
@@ -209,7 +250,7 @@ class _OrderScreenState extends State<OrderScreen> {
                                   labelText: 'Имя',
                                   alignLabelWithHint: true,
                                   floatingLabelBehavior:
-                                      FloatingLabelBehavior.auto,
+                                  FloatingLabelBehavior.auto,
                                   contentPadding: const EdgeInsets.symmetric(
                                       vertical: 0, horizontal: 0),
                                   labelStyle: TextStyle(
@@ -226,7 +267,7 @@ class _OrderScreenState extends State<OrderScreen> {
                                   alignLabelWithHint: true,
                                   labelText: 'Фамилия',
                                   floatingLabelBehavior:
-                                      FloatingLabelBehavior.auto,
+                                  FloatingLabelBehavior.auto,
                                   contentPadding: EdgeInsets.symmetric(
                                       vertical: 0, horizontal: 0),
                                   labelStyle: TextStyle(
@@ -243,7 +284,7 @@ class _OrderScreenState extends State<OrderScreen> {
                                   labelText: 'Адресс доставки',
                                   alignLabelWithHint: true,
                                   floatingLabelBehavior:
-                                      FloatingLabelBehavior.auto,
+                                  FloatingLabelBehavior.auto,
                                   contentPadding: EdgeInsets.symmetric(
                                       vertical: 0, horizontal: 0),
                                   labelStyle: TextStyle(
@@ -260,7 +301,7 @@ class _OrderScreenState extends State<OrderScreen> {
                                   labelText: 'Номер',
                                   alignLabelWithHint: true,
                                   floatingLabelBehavior:
-                                      FloatingLabelBehavior.auto,
+                                  FloatingLabelBehavior.auto,
                                   contentPadding: EdgeInsets.symmetric(
                                       vertical: 0, horizontal: 0),
                                   labelStyle: TextStyle(
@@ -274,7 +315,7 @@ class _OrderScreenState extends State<OrderScreen> {
                               Text(
                                 'В формате +998__ _______',
                                 style:
-                                    TextStyle(color: Colors.grey, fontSize: 10),
+                                TextStyle(color: Colors.grey, fontSize: 10),
                               ),
                               SizedBox(
                                 height: 10,
@@ -282,7 +323,7 @@ class _OrderScreenState extends State<OrderScreen> {
                               Text(
                                 'Мы пришлем уведомление о статусе заказа на указанный вами телефон.Курьер свяжется с вами по телефону для уточнения времени доставки.',
                                 style:
-                                    TextStyle(color: Colors.grey, fontSize: 12),
+                                TextStyle(color: Colors.grey, fontSize: 12),
                               )
                             ],
                           ),
@@ -468,34 +509,70 @@ class _OrderScreenState extends State<OrderScreen> {
               SizedBox(
                 height: 10,
               ),
-      Container(
-        margin: EdgeInsets.symmetric(horizontal: 10),
-        child: ExpansionTile(
-
-          title: Text(context.tr('haspromo')),
-          children: [
-            Container(
-             margin: EdgeInsets.symmetric(horizontal: 15),
-              child: Column(children: [
-              TextField(
-                controller: promoController,
-                decoration: InputDecoration(
-                  hintText: context.tr('promocode'),
-                  alignLabelWithHint: true,
-                  floatingLabelBehavior:
-                  FloatingLabelBehavior.auto,
-                  hintStyle: TextStyle(color: Colors.grey,fontSize: 15),
-                  contentPadding: EdgeInsets.symmetric(
-                      vertical: 0, horizontal: 0),
-                  labelStyle: TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey.shade700),
-                ),
-              ),
-            ],),)
-          ],
-        ),
-      ),
+              Container(
+                  margin: EdgeInsets.symmetric(horizontal: 10),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          children: [
+                            TextField(
+                              controller: promoController,
+                              decoration: InputDecoration(
+                                  hintText: context.tr('promocode'),
+                                  alignLabelWithHint: true,
+                                  floatingLabelBehavior:
+                                  FloatingLabelBehavior.auto,
+                                  hintStyle: TextStyle(
+                                      color: Colors.grey, fontSize: 15),
+                                  errorText: amountPromo == '0' &&
+                                      promoController.text != ''
+                                      ? 'Несушествующий промокод'
+                                      : null,
+                                  contentPadding: EdgeInsets.symmetric(
+                                      vertical: 0, horizontal: 0),
+                                  labelStyle: TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.grey.shade700),
+                                  suffix: amountPromo != '0'
+                                      ? Icon(
+                                    Icons.check,
+                                    size: 15,
+                                    color: Colors.lightGreen,
+                                  )
+                                      : null),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        width: 20,
+                      ),
+                      ElevatedButton(
+                        onPressed: () async {
+                          if (promoController.text != '') {
+                            setState(() {
+                              amountPromo =
+                              findAmountForPromoCode(promoController.text)!;
+                            });
+                            print(amountPromo);
+                          } else {
+                            print('no');
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Color(0xFF79B531),
+                        ),
+                        child: Text(
+                          context.tr('check'),
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.normal,
+                          ),
+                        ),
+                      ),
+                    ],
+                  )),
               SizedBox(
                 height: 10,
               ),
@@ -515,21 +592,25 @@ class _OrderScreenState extends State<OrderScreen> {
                           SizedBox(
                             height: 10,
                           ),
-                          // Container(
-                          //   width: MediaQuery.of(context).size.width,
-                          //   decoration: BoxDecoration(
-                          //     color: Colors.grey.shade200,
-                          //     borderRadius: BorderRadius.circular(10),
-                          //   ),
-                          //   child: Center(
-                          //       child: Padding(
-                          //     padding: EdgeInsets.symmetric(vertical: 10),
-                          //     child: Text(gettextDelivery()),
-                          //   )),
-                          // ),
                           SizedBox(
                             height: 15,
                           ),
+                          if (amountPromo != '0')
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'Промокод',
+                                  style: TextStyle(color: Colors.grey),
+                                ),
+                                Text(
+                                  '-${formatNumber(getPromoSum().round())} ${context.tr('uzs')}',
+                                  style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w500),
+                                ),
+                              ],
+                            ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
@@ -538,8 +619,7 @@ class _OrderScreenState extends State<OrderScreen> {
                                 style: TextStyle(color: Colors.grey),
                               ),
                               Text(
-                                formatNumber(widget.totalPrice.round())
-                                        .toString() +
+                                formatNumber(getTotal().round()) +
                                     ' ' +
                                     context.tr('uzs'),
                                 style: TextStyle(
@@ -563,21 +643,21 @@ class _OrderScreenState extends State<OrderScreen> {
                                         child: CircularProgressIndicator(),
                                       );
                                       final OrderModel? orderModel =
-                                          await httpService.orderProducts(
-                                              widget.orderProducts,
-                                              Config.nameUser.toString(),
-                                              Config.nameUser.toString(),
-                                              Config.email,
-                                              Config.phoneUser.toString(),
-                                              int.parse(Config.id),
-                                              addressController.text.trim(),
-                                              nameController.text.trim(),
-                                              surnameController.text.trim(),
-                                              numberController.text.trim(),
-                                              widget.totalPrice.toString(),
-                                              countryDropdown,
-                                              getPay(),
-                                              getDelivery());
+                                      await httpService.orderProducts(
+                                          widget.orderProducts,
+                                          Config.nameUser.toString(),
+                                          Config.nameUser.toString(),
+                                          Config.email,
+                                          Config.phoneUser.toString(),
+                                          int.parse(Config.id),
+                                          addressController.text.trim(),
+                                          nameController.text.trim(),
+                                          surnameController.text.trim(),
+                                          numberController.text.trim(),
+                                          getTotal().toString(),
+                                          countryDropdown,
+                                          getPay(),
+                                          getDelivery());
 
                                       if (orderModel != null) {
                                         await Navigator.push(
@@ -596,7 +676,7 @@ class _OrderScreenState extends State<OrderScreen> {
                                         print(false);
                                       }
                                       for (final item
-                                          in FavoritesPage.checkedProducts) {
+                                      in FavoritesPage.checkedProducts) {
                                         if (FavoritesPage.orderProducts
                                             .contains(item)) {
                                           FavoritesPage.orderProducts

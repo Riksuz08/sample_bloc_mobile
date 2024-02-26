@@ -155,7 +155,7 @@ class FullScreenCarousel extends StatelessWidget {
             ),
           ),
           Positioned(
-            top: 20,
+            top: 50,
             right: 5,
             child: IconButton(
               icon: Icon(Icons.close, color: Colors.black),

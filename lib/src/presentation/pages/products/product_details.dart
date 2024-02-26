@@ -42,7 +42,7 @@ class _ProductDetailsState extends State<ProductDetails> {
 
   final CarouselController _carouselController = CarouselController();
   final PagingController<int, ProductItem> _pagingController =
-      PagingController(firstPageKey: 1);
+  PagingController(firstPageKey: 1);
   bool isVisible = false;
   late List<Map<String, dynamic>> dropdownItems = [];
   List<Map<String, dynamic>> filteredDropdownItems = [];
@@ -122,7 +122,7 @@ class _ProductDetailsState extends State<ProductDetails> {
   void toggleFavorite() {
     setState(() {
       final isFavorite =
-          FavoriteProductsPage.favoriteProducts.contains(widget.product);
+      FavoriteProductsPage.favoriteProducts.contains(widget.product);
 
       if (isFavorite) {
         FavoriteProductsPage.favoriteProducts.remove(widget.product);
@@ -136,7 +136,7 @@ class _ProductDetailsState extends State<ProductDetails> {
   Future<void> toggleOrder() async {
     if (id != -1) {
       final ProductItem variableProduct =
-          await HttpService().fetchProductById(id);
+      await HttpService().fetchProductById(id);
       print(variableProduct);
       setState(() {
         final isInCart = FavoritesPage.orderProducts
@@ -213,7 +213,7 @@ class _ProductDetailsState extends State<ProductDetails> {
     inSkidka = hasDelWord(widget.product.pricehtml);
     // Remove spaces from the input string
     final String stringWithoutSpaces =
-        widget.product.pricehtml.replaceAll(' ', '');
+    widget.product.pricehtml.replaceAll(' ', '');
 
     // Use the regular expression to extract numbers
     final RegExp regExp = RegExp(r'\d+');
@@ -221,7 +221,7 @@ class _ProductDetailsState extends State<ProductDetails> {
 
     // Convert matched substrings to integers and return a list of numbers
     final List prices =
-        matches.map((match) => int.parse(match.group(0)!)).toList();
+    matches.map((match) => int.parse(match.group(0)!)).toList();
     if (prices.length == 2 && !prices.contains(0)) {
       if (prices[0] > prices[1]) {
         maxprice = prices[0];
@@ -340,173 +340,203 @@ class _ProductDetailsState extends State<ProductDetails> {
         children: [
           SingleChildScrollView(
               child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 5),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-
-                ProductCarouselSlider(
-                    product: widget.product,
-                    carouselController: _carouselController),
-                Container(
-                  width: MediaQuery.of(context).size.width,
-                  padding: const EdgeInsets.all(10),
-                  alignment: Alignment.centerLeft,
-                  child: Html(
-                    data: widget.product.name,
-                    style: {
-                      'body': Style(
-                        fontSize: FontSize(17),
-                        fontWeight: FontWeight.bold,
-                      ),
-                    },
-                  ),
-                ),
-                Row(
+                padding: EdgeInsets.symmetric(horizontal: 5),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    SizedBox(width: 6),
-                    Icon(Icons.star, color: Colors.yellow, size: 20),
-                    SizedBox(width: 6),
-                    Text(generateRandomRating().toString(),
-                        style: TextStyle(fontSize: 14)),
-                    SizedBox(width: 20),
+                    ProductCarouselSlider(
+                        product: widget.product,
+                        carouselController: _carouselController),
                     Container(
+                      width: MediaQuery.of(context).size.width,
                       padding: const EdgeInsets.all(10),
-                      alignment: Alignment.topRight,
-                      child: Text(
-                        inStock,
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                          color: widget.product.stockstatus
-                              ? Color(0xFF79B531)
-                              : Colors.red,
-                        ),
+                      alignment: Alignment.centerLeft,
+                      child: Html(
+                        data: widget.product.name,
+                        style: {
+                          'body': Style(
+                            fontSize: FontSize(17),
+                            fontWeight: FontWeight.bold,
+                          ),
+                        },
                       ),
                     ),
-                  ],
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    for (final dropdownItem in dropdownItems)
-                      if (dropdownItem['name'] != 'Brendlar' &&
-                          dropdownItem['name'] != 'Ishlab chiqarilgan davlat' &&
-                          dropdownItem['name'] != 'Material' &&
-                          dropdownItem['name'] != 'Бренды')
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 8),
-                              // Adjust the left padding as needed
-                              child: Text(dropdownItem['name'] ?? ''),
+                    Row(
+                      children: [
+                        SizedBox(width: 6),
+                        Icon(Icons.star, color: Colors.yellow, size: 20),
+                        SizedBox(width: 6),
+                        Text(generateRandomRating().toString(),
+                            style: TextStyle(fontSize: 14)),
+                        SizedBox(width: 20),
+                        Container(
+                          padding: const EdgeInsets.all(10),
+                          alignment: Alignment.topRight,
+                          child: Text(
+                            inStock,
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                              color: widget.product.stockstatus
+                                  ? Color(0xFF79B531)
+                                  : Colors.red,
                             ),
-                            Wrap(
-                              spacing: 8,
+                          ),
+                        ),
+                      ],
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        for (final dropdownItem in dropdownItems)
+                          if (dropdownItem['name'] != 'Brendlar' &&
+                              dropdownItem['name'] != 'Ishlab chiqarilgan davlat' &&
+                              dropdownItem['name'] != 'Material' &&
+                              dropdownItem['name'] != 'Бренды')
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                for (final option in dropdownItem['options'])
-                                  TChoiceChip(
-                                    text: option.toString(),
-                                    selected: selectedDropdownValues[
-                                            dropdownItem['name']] ==
-                                        option,
-                                    onSelected: (value) {
-                                      setState(() {
-                                        optionx = option;
-                                        selectedDropdownValues[
+                                Padding(
+                                  padding:
+                                  const EdgeInsets.symmetric(horizontal: 8),
+                                  // Adjust the left padding as needed
+                                  child: Text(dropdownItem['name'] ?? ''),
+                                ),
+                                Wrap(
+                                  spacing: 8,
+                                  children: [
+                                    for (final option in dropdownItem['options'])
+                                      TChoiceChip(
+                                        text: option.toString(),
+                                        selected: selectedDropdownValues[
+                                        dropdownItem['name']] ==
+                                            option,
+                                        onSelected: (value) {
+                                          setState(() {
+                                            optionx = option;
+                                            selectedDropdownValues[
                                             dropdownItem['name']] = option;
-                                        print('x' +
-                                            selectedDropdownValues[
+                                            print('x' +
+                                                selectedDropdownValues[
                                                 dropdownItem['name']]);
-                                        print(getColorSlugByName(
-                                            selectedDropdownValues[
+                                            print(getColorSlugByName(
+                                                selectedDropdownValues[
                                                 dropdownItem['name']]));
-                                        print(getSrcImageWithSlug(
-                                            selectedDropdownValues[
+                                            print(getSrcImageWithSlug(
+                                                selectedDropdownValues[
                                                 dropdownItem['name']]));
-                                        print(getIdWithSlug(
-                                            selectedDropdownValues[
+                                            print(getIdWithSlug(
+                                                selectedDropdownValues[
                                                 dropdownItem['name']]));
-                                        print(id.toString() + 'do');
-                                        id = getIdWithSlug(
-                                            selectedDropdownValues[
+                                            print(id.toString() + 'do');
+                                            id = getIdWithSlug(
+                                                selectedDropdownValues[
                                                 dropdownItem['name']]);
-                                        if (id == -1) {
-                                          id = getIdWithOption(
-                                              selectedDropdownValues[
-                                                  dropdownItem['name']]);
-                                        }
-                                        print(id.toString() + 'posle');
-                                        scrollToImage(getSrcImageWithSlug(
-                                            selectedDropdownValues[
-                                                dropdownItem['name']]));
-                                        scrollToImage(getSrcImageWithOption(
-                                            selectedDropdownValues[
-                                                dropdownItem['name']]));
-                                        for (final item
-                                            in widget.product.variations) {
-                                          if (removeSymbolsAndSpaces(
-                                                  item.option) ==
-                                              removeSymbolsAndSpaces(
+                                            if (id == -1) {
+                                              id = getIdWithOption(
                                                   selectedDropdownValues[
+                                                  dropdownItem['name']]);
+                                            }
+                                            print(id.toString() + 'posle');
+                                            scrollToImage(getSrcImageWithSlug(
+                                                selectedDropdownValues[
+                                                dropdownItem['name']]));
+                                            scrollToImage(getSrcImageWithOption(
+                                                selectedDropdownValues[
+                                                dropdownItem['name']]));
+                                            for (final item
+                                            in widget.product.variations) {
+                                              if (removeSymbolsAndSpaces(
+                                                  item.option) ==
+                                                  removeSymbolsAndSpaces(
+                                                      selectedDropdownValues[
                                                       dropdownItem['name']])) {
-                                            setState(() {
-                                              currentPrice = item.price;
-                                              regularPrice = item.regularprice;
+                                                setState(() {
+                                                  currentPrice = item.price;
+                                                  regularPrice = item.regularprice;
 
-                                              if (currentPrice ==
-                                                  regularPrice) {
-                                                inSkidka = false;
-                                                maxprice = 0;
-                                                minprice =
-                                                    int.parse(currentPrice);
-                                              } else if (int.parse(
+                                                  if (currentPrice ==
+                                                      regularPrice) {
+                                                    inSkidka = false;
+                                                    maxprice = 0;
+                                                    minprice =
+                                                        int.parse(currentPrice);
+                                                  } else if (int.parse(
                                                       regularPrice) >
-                                                  int.parse(currentPrice)) {
-                                                inSkidka = true;
-                                                maxprice =
-                                                    int.parse(regularPrice);
-                                                minprice =
-                                                    int.parse(currentPrice);
-                                              } else {}
-                                            });
-                                          }
-                                        }
-                                        print("Current price" + currentPrice);
-                                      });
-                                    },
-                                  ),
+                                                      int.parse(currentPrice)) {
+                                                    inSkidka = true;
+                                                    maxprice =
+                                                        int.parse(regularPrice);
+                                                    minprice =
+                                                        int.parse(currentPrice);
+                                                  } else {}
+                                                });
+                                              }
+                                            }
+                                            print("Current price" + currentPrice);
+                                          });
+                                        },
+                                      ),
+                                  ],
+                                ),
                               ],
                             ),
-                          ],
-                        ),
-                  ],
-                ),
-                SizedBox(
-                  height: 25,
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Visibility(
-                      visible: inSkidka,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
+                      ],
+                    ),
+                    SizedBox(
+                      height: 25,
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Visibility(
+                          visible: inSkidka,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                '${formatNumber(minprice)} сум',
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 26,
-                                  color: Colors.black,
+                              Row(
+                                children: [
+                                  Text(
+                                    '${formatNumber(minprice)} сум',
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 26,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 10,
+                                  ),
+                                  Visibility(
+                                    visible: percent == 0 ? false : true,
+                                    child: Container(
+                                        decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(15),
+                                            color: Color(0xFF79B531)),
+                                        child: Padding(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 5, vertical: 2),
+                                          child: Text(
+                                            '-' + percent.toString() + '%',
+                                            style: TextStyle(
+                                                color: Colors.white, fontSize: 10),
+                                          ),
+                                        )),
+                                  )
+                                ],
+                              ),
+                              Visibility(
+                                visible: maxprice.toString() == '0' ? false : true,
+                                child: Text(
+                                  formatNumber(maxprice) + ' ' + context.tr('uzs'),
+                                  style: TextStyle(
+                                      decoration: TextDecoration.lineThrough,
+                                      color: Colors.grey,
+                                      fontSize: 17),
                                 ),
                               ),
                               SizedBox(
-                                width: 10,
+                                height: 10,
                               ),
                               Visibility(
                                 visible: percent == 0 ? false : true,
@@ -518,7 +548,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                                       padding: EdgeInsets.symmetric(
                                           horizontal: 5, vertical: 2),
                                       child: Text(
-                                        '-' + percent.toString() + '%',
+                                        context.tr('discount'),
                                         style: TextStyle(
                                             color: Colors.white, fontSize: 10),
                                       ),
@@ -526,381 +556,350 @@ class _ProductDetailsState extends State<ProductDetails> {
                               )
                             ],
                           ),
-                          Visibility(
-                            visible: maxprice.toString() == '0' ? false : true,
-                            child: Text(
-                              formatNumber(maxprice) + ' ' + context.tr('uzs'),
-                              style: TextStyle(
-                                  decoration: TextDecoration.lineThrough,
-                                  color: Colors.grey,
-                                  fontSize: 17),
+                        ),
+                        Visibility(
+                          visible: !inSkidka,
+                          child: Row(
+                            children: [
+                              // Visibility(
+                              //   visible:
+                              //       maxprice.toString() == '0' ? false : true,
+                              //   child: Text(
+                              //     formatNumber(maxprice) +
+                              //         ' ' +
+                              //         context.tr('uzs'),
+                              //     style: TextStyle(
+                              //         color: Colors.grey, fontSize: 12),
+                              //   ),
+                              // ),
+                              Visibility(
+                                visible: (maxprice != 0 && minprice != 0),
+                                child: Text(
+                                  '${formatNumber(minprice)} - ${formatNumber(maxprice)} сум',
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.normal,
+                                    fontSize: 20,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                              ),
+                              Visibility(
+                                visible: (minprice != 0 && maxprice == 0),
+                                child: Text(
+                                  '${formatNumber(minprice)} сум',
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 26,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        // Row(
+                        //   children: [
+                        //     Text(
+                        //       formatNumber(minprice) + ' ' + context.tr('uzs'),
+                        //       style: TextStyle(fontSize: 20),
+                        //     ),
+                        //     SizedBox(
+                        //       width: 10,
+                        //     ),
+                        //     Visibility(
+                        //       visible: percent == 0 ? false : true,
+                        //       child: Container(
+                        //           decoration: BoxDecoration(
+                        //               borderRadius: BorderRadius.circular(15),
+                        //               color: Color(0xFF79B531)),
+                        //           child: Padding(
+                        //             padding: EdgeInsets.symmetric(
+                        //                 horizontal: 5, vertical: 2),
+                        //             child: Text(
+                        //               '-' + percent.toString() + '%',
+                        //               style: TextStyle(
+                        //                   color: Colors.white, fontSize: 10),
+                        //             ),
+                        //           )),
+                        //     )
+                        //   ],
+                        // ),
+                        // Visibility(
+                        //   visible: maxprice.toString() == '0' ? false : true,
+                        //   child: Text(
+                        //     formatNumber(maxprice) + ' ' + context.tr('uzs'),
+                        //     style: TextStyle(
+                        //         decoration: TextDecoration.lineThrough,
+                        //         color: Colors.grey),
+                        //   ),
+                        // ),
+                        // SizedBox(
+                        //   height: 10,
+                        // ),
+                        // Visibility(
+                        //   visible: percent == 0 ? false : true,
+                        //   child: Container(
+                        //       decoration: BoxDecoration(
+                        //           borderRadius: BorderRadius.circular(15),
+                        //           color: Color(0xFF79B531)),
+                        //       child: Padding(
+                        //         padding: EdgeInsets.symmetric(
+                        //             horizontal: 5, vertical: 2),
+                        //         child: Text(
+                        //           context.tr('discount'),
+                        //           style:
+                        //               TextStyle(color: Colors.white, fontSize: 10),
+                        //         ),
+                        //       )),
+                        // )
+                      ],
+                    ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    Row(
+                      children: [
+                        const Text(
+                          'Категории:  ',
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
+                        ),
+                        Expanded(
+                          child: Text(
+                            widget.product.categoriesName.join(', '),
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.normal,
+                              color: Colors.black,
                             ),
                           ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Visibility(
-                            visible: percent == 0 ? false : true,
-                            child: Container(
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(15),
-                                    color: Color(0xFF79B531)),
-                                child: Padding(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: 5, vertical: 2),
-                                  child: Text(
-                                    context.tr('discount'),
-                                    style: TextStyle(
-                                        color: Colors.white, fontSize: 10),
-                                  ),
-                                )),
-                          )
-                        ],
+                        )
+                      ],
+                    ),
+                    SizedBox(
+                      height: 5,
+                    ),
+                    Container(
+                      height: 1,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
                       ),
+                      width: MediaQuery.of(context).size.width,
+                      color: Colors.grey.shade300,
+                    ),
+
+                    SizedBox(
+                      height: 6,
                     ),
                     Visibility(
-                      visible: !inSkidka,
-                      child: Row(
+                      visible:
+                      widget.product.shortdescription.isNotEmpty ? true : false,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // Visibility(
-                          //   visible:
-                          //       maxprice.toString() == '0' ? false : true,
-                          //   child: Text(
-                          //     formatNumber(maxprice) +
-                          //         ' ' +
-                          //         context.tr('uzs'),
-                          //     style: TextStyle(
-                          //         color: Colors.grey, fontSize: 12),
-                          //   ),
-                          // ),
-                          Visibility(
-                            visible: (maxprice != 0 && minprice != 0),
-                            child: Text(
-                              '${formatNumber(minprice)} - ${formatNumber(maxprice)} сум',
-                              style: const TextStyle(
-                                fontWeight: FontWeight.normal,
-                                fontSize: 20,
-                                color: Colors.black,
-                              ),
+                          Text(
+                            'Краткое описание товара: ',
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
                             ),
                           ),
-                          Visibility(
-                            visible: (minprice != 0 && maxprice == 0),
-                            child: Text(
-                              '${formatNumber(minprice)} сум',
-                              style: const TextStyle(
-                                fontWeight: FontWeight.normal,
-                                fontSize: 20,
-                                color: Colors.black,
-                              ),
+                          Container(
+                            alignment: Alignment.centerLeft,
+                            child: Html(
+                              data: widget.product.shortdescription,
+                              style: {
+                                'ul': Style(
+                                  fontSize: FontSize(12),
+                                  fontWeight: FontWeight.normal,
+                                ),
+                                'p': Style(
+                                  fontSize: FontSize(12),
+                                  fontWeight: FontWeight.normal,
+                                ),
+                                'div': Style(
+                                  fontSize: FontSize(12),
+                                  fontWeight: FontWeight.normal,
+                                ),
+                              },
                             ),
                           ),
                         ],
                       ),
                     ),
-                    // Row(
-                    //   children: [
-                    //     Text(
-                    //       formatNumber(minprice) + ' ' + context.tr('uzs'),
-                    //       style: TextStyle(fontSize: 20),
-                    //     ),
-                    //     SizedBox(
-                    //       width: 10,
-                    //     ),
-                    //     Visibility(
-                    //       visible: percent == 0 ? false : true,
-                    //       child: Container(
-                    //           decoration: BoxDecoration(
-                    //               borderRadius: BorderRadius.circular(15),
-                    //               color: Color(0xFF79B531)),
-                    //           child: Padding(
-                    //             padding: EdgeInsets.symmetric(
-                    //                 horizontal: 5, vertical: 2),
-                    //             child: Text(
-                    //               '-' + percent.toString() + '%',
-                    //               style: TextStyle(
-                    //                   color: Colors.white, fontSize: 10),
-                    //             ),
-                    //           )),
-                    //     )
-                    //   ],
-                    // ),
-                    // Visibility(
-                    //   visible: maxprice.toString() == '0' ? false : true,
-                    //   child: Text(
-                    //     formatNumber(maxprice) + ' ' + context.tr('uzs'),
-                    //     style: TextStyle(
-                    //         decoration: TextDecoration.lineThrough,
-                    //         color: Colors.grey),
-                    //   ),
-                    // ),
-                    // SizedBox(
-                    //   height: 10,
-                    // ),
-                    // Visibility(
-                    //   visible: percent == 0 ? false : true,
-                    //   child: Container(
-                    //       decoration: BoxDecoration(
-                    //           borderRadius: BorderRadius.circular(15),
-                    //           color: Color(0xFF79B531)),
-                    //       child: Padding(
-                    //         padding: EdgeInsets.symmetric(
-                    //             horizontal: 5, vertical: 2),
-                    //         child: Text(
-                    //           context.tr('discount'),
-                    //           style:
-                    //               TextStyle(color: Colors.white, fontSize: 10),
-                    //         ),
-                    //       )),
-                    // )
-                  ],
-                ),
-                SizedBox(
-                  height: 15,
-                ),
-                Row(
-                  children: [
-                    const Text(
-                      'Категории:  ',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                      ),
-                    ),
-                    Expanded(
-                      child: Text(
-                        widget.product.categoriesName.join(', '),
-                        style: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.normal,
-                          color: Colors.black,
-                        ),
-                      ),
-                    )
-                  ],
-                ),
-                SizedBox(
-                  height: 5,
-                ),
-                Container(
-                  height: 1,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                  ),
-                  width: MediaQuery.of(context).size.width,
-                  color: Colors.grey.shade300,
-                ),
 
-                SizedBox(
-                  height: 6,
-                ),
-                Visibility(
-                  visible:
-                      widget.product.shortdescription.isNotEmpty ? true : false,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Краткое описание товара: ',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                        ),
-                      ),
-                      Container(
-                        alignment: Alignment.centerLeft,
-                        child: Html(
-                          data: widget.product.shortdescription,
-                          style: {
-                            'ul': Style(
-                              fontSize: FontSize(12),
-                              fontWeight: FontWeight.normal,
-                            ),
-                            'p': Style(
-                              fontSize: FontSize(12),
-                              fontWeight: FontWeight.normal,
-                            ),
-                            'div': Style(
-                              fontSize: FontSize(12),
-                              fontWeight: FontWeight.normal,
-                            ),
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-
-                Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20),
-                    child: InkWell(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => FullDescription(
-                              fulldesctription: widget.product.description,
-                            ),
-                          ),
-                        );
-                      },
-                      child: Container(
-                        padding: EdgeInsets.all(10),
-                        width: MediaQuery.of(context).size.width,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(15),
-                            color: Colors.grey[200]),
-                        child: Center(
-                          child: Text(
-                            context.tr('fulldesc'),
-                          ),
-                        ),
-                      ),
-                    )),
-
-                // Row(
-                //   children: [
-                //     SizedBox(width: 5,),
-                //     Image.asset('assets/png/asia_noText.png', width: 30,height: 30,),
-                //     MaterialButton(
-                //       onPressed: _launchURLInBrowser,
-                //       child: Text('Открыть на сайте',style: TextStyle(color: Color(
-                //           0xFF79B531)),),
-                //       textColor: Colors.black,
-                //       padding: const EdgeInsets.all(5.0),
-                //     ),
-                //   ],
-                // ),
-
-                // Container(
-                //   decoration: const BoxDecoration(
-                //     color: Color(0xFF79B531),
-                //     shape: BoxShape.rectangle,
-                //     borderRadius: BorderRadius.all(Radius.circular(15))
-                //   ),
-                //   child: Column(
-                //     children: [
-                //       Text("Доставка",style: TextStyle(color: Colors.white,fontSize: 20,fontWeight: FontWeight.bold),),
-                //       Row(
-                //         children: [
-                //           SizedBox(width: 10,),
-                //           Image(image:NetworkImage('https://asiaposuda.uz/wp-content/uploads/2021/08/delivery.webp'),width: 100,height: 100,),
-                //           SizedBox(width: 10,),
-                //           Expanded(child:Column(
-                //             children: [
-                //               Text('Доставка по всему Ташкенту  30000 сум. \n Доставка по региону по договоренности с клиентом ',
-                //                 style: TextStyle(color: Colors.white),
-                //               )
-                //             ],
-                //           ),)
-                //
-                //
-                //         ],
-                //
-                //       ),
-                //
-                //     ],
-                //   )
-                // ),
-                const SizedBox(
-                  height: 20,
-                ),
-
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    children: [
-                      for (var categoryName in widget.product.categoriesName)
-                        GestureDetector(
+                    Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 20),
+                        child: InkWell(
                           onTap: () {
-                            print(categoryName);
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => ProductsList(
-                                  categoryId: getSlugByName(categoryName),
-                                  count: 0,
-                                  categoryName: categoryName,
+                                builder: (context) => FullDescription(
+                                  fulldesctription: widget.product.description,
                                 ),
                               ),
                             );
                           },
                           child: Container(
+                            padding: EdgeInsets.all(10),
+                            width: MediaQuery.of(context).size.width,
                             decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(15),
-                              color: Color(0xFF79B531),
-                            ),
-                            margin: EdgeInsets.only(
-                                right:
-                                    8), // Adjust the spacing between containers
-                            child: Padding(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 12, vertical: 8),
+                                borderRadius: BorderRadius.circular(15),
+                                color: Colors.grey[200]),
+                            child: Center(
                               child: Text(
-                                categoryName,
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 15),
+                                context.tr('fulldesc'),
                               ),
                             ),
                           ),
-                        )
-                    ],
-                  ),
-                ),
+                        )),
 
-                const SizedBox(
-                  height: 20,
-                ),
-                Container(
-                  height: 1,
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  width: MediaQuery.of(context).size.width,
-                  color: Colors.grey.shade300,
-                ),
-                Container(
-                  width: MediaQuery.of(context).size.width,
-                  padding: const EdgeInsets.all(5),
-                  child: const Text(
-                    'Похожие товары',
-                    style: TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.w400,
-                        fontSize: 18),
-                  ),
-                ),
-                SafeArea(
-                  child: PagedGridView<int, ProductItem>(
-                    pagingController: _pagingController,
-                    shrinkWrap: true,
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                      mainAxisExtent: 330,
-                      childAspectRatio: 2 / 3,
-                      crossAxisSpacing: 10,
-                      mainAxisSpacing: 10,
-                      crossAxisCount: 2,
+                    // Row(
+                    //   children: [
+                    //     SizedBox(width: 5,),
+                    //     Image.asset('assets/png/asia_noText.png', width: 30,height: 30,),
+                    //     MaterialButton(
+                    //       onPressed: _launchURLInBrowser,
+                    //       child: Text('Открыть на сайте',style: TextStyle(color: Color(
+                    //           0xFF79B531)),),
+                    //       textColor: Colors.black,
+                    //       padding: const EdgeInsets.all(5.0),
+                    //     ),
+                    //   ],
+                    // ),
+
+                    // Container(
+                    //   decoration: const BoxDecoration(
+                    //     color: Color(0xFF79B531),
+                    //     shape: BoxShape.rectangle,
+                    //     borderRadius: BorderRadius.all(Radius.circular(15))
+                    //   ),
+                    //   child: Column(
+                    //     children: [
+                    //       Text("Доставка",style: TextStyle(color: Colors.white,fontSize: 20,fontWeight: FontWeight.bold),),
+                    //       Row(
+                    //         children: [
+                    //           SizedBox(width: 10,),
+                    //           Image(image:NetworkImage('https://asiaposuda.uz/wp-content/uploads/2021/08/delivery.webp'),width: 100,height: 100,),
+                    //           SizedBox(width: 10,),
+                    //           Expanded(child:Column(
+                    //             children: [
+                    //               Text('Доставка по всему Ташкенту  30000 сум. \n Доставка по региону по договоренности с клиентом ',
+                    //                 style: TextStyle(color: Colors.white),
+                    //               )
+                    //             ],
+                    //           ),)
+                    //
+                    //
+                    //         ],
+                    //
+                    //       ),
+                    //
+                    //     ],
+                    //   )
+                    // ),
+                    const SizedBox(
+                      height: 20,
                     ),
-                    physics: const BouncingScrollPhysics(),
-                    padding: const EdgeInsets.all(10),
-                    builderDelegate: PagedChildBuilderDelegate<ProductItem>(
-                      itemBuilder: (context, item, index) => ProductCard(
-                        products: item,
-                        isDiscount: false,
+
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: [
+                          for (var categoryName in widget.product.categoriesName)
+                            GestureDetector(
+                              onTap: () {
+                                print(categoryName);
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => ProductsList(
+                                      categoryId: getSlugByName(categoryName),
+                                      count: 0,
+                                      categoryName: categoryName,
+                                    ),
+                                  ),
+                                );
+                              },
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(15),
+                                  color: Color(0xFF79B531),
+                                ),
+                                margin: EdgeInsets.only(
+                                    right:
+                                    8), // Adjust the spacing between containers
+                                child: Padding(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 12, vertical: 8),
+                                  child: Text(
+                                    categoryName,
+                                    style: TextStyle(
+                                        color: Colors.white, fontSize: 15),
+                                  ),
+                                ),
+                              ),
+                            )
+                        ],
                       ),
                     ),
-                  ),
+
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Container(
+                      height: 1,
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      width: MediaQuery.of(context).size.width,
+                      color: Colors.grey.shade300,
+                    ),
+                    Container(
+                      width: MediaQuery.of(context).size.width,
+                      padding: const EdgeInsets.all(5),
+                      child: const Text(
+                        'Похожие товары',
+                        style: TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.w400,
+                            fontSize: 18),
+                      ),
+                    ),
+                    SafeArea(
+                      child: PagedGridView<int, ProductItem>(
+                        pagingController: _pagingController,
+                        shrinkWrap: true,
+                        gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                          mainAxisExtent: 330,
+                          childAspectRatio: 2 / 3,
+                          crossAxisSpacing: 10,
+                          mainAxisSpacing: 10,
+                          crossAxisCount: 2,
+                        ),
+                        physics: const BouncingScrollPhysics(),
+                        padding: const EdgeInsets.all(10),
+                        builderDelegate: PagedChildBuilderDelegate<ProductItem>(
+                          itemBuilder: (context, item, index) => ProductCard(
+                            products: item,
+                            isDiscount: false,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-          )),
+              )),
           Positioned(
             top: 0,
             left: 0,
             right: 0,
             child: Container(
-              height: 140,
+              height: 100,
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
@@ -908,42 +907,45 @@ class _ProductDetailsState extends State<ProductDetails> {
                   colors: [Colors.black.withOpacity(0.8), Colors.transparent],
                 ),
               ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  IconButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    icon: const Icon(Icons.arrow_back, color: Colors.white),
-                  ),
-                  Row(
-                    children: [
-                      IconButton(
-                        onPressed: () {
-                          toggleFavorite();
-                        },
-                        icon: Icon(
-                          FavoriteProductsPage.favoriteProducts
-                                  .contains(widget.product)
-                              ? Icons.favorite
-                              : Icons.favorite_border,
-                          color: Colors.white,
+              child: Column(children: [
+                SizedBox(height: 50,),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    IconButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      icon: const Icon(Icons.arrow_back, color: Colors.white),
+                    ),
+                    Row(
+                      children: [
+                        IconButton(
+                          onPressed: () {
+                            toggleFavorite();
+                          },
+                          icon: Icon(
+                            FavoriteProductsPage.favoriteProducts
+                                .contains(widget.product)
+                                ? Icons.favorite
+                                : Icons.favorite_border,
+                            color: Colors.white,
+                          ),
                         ),
-                      ),
-                      IconButton(
-                        onPressed: () {
-                          shareProduct();
-                        },
-                        icon: Icon(
-                          Icons.ios_share_outlined,
-                          color: Colors.white,
+                        IconButton(
+                          onPressed: () {
+                            shareProduct();
+                          },
+                          icon: Icon(
+                            Icons.ios_share_outlined,
+                            color: Colors.white,
+                          ),
                         ),
-                      ),
-                    ],
-                  )
-                ],
-              ),
+                      ],
+                    )
+                  ],
+                ),
+              ],)
             ),
           ),
         ],
